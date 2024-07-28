@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  code: String,
   avatar: {
     type: String,  // URL for the user's profile picture
     default: 'ashwithpikachu.jpg'  // Default avatar image

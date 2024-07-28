@@ -51,8 +51,8 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('profile');
-});
+    res.redirect('/register')
+});git
 
 app.get('/login', (req, res) => {
     res.render('login');

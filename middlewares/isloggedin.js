@@ -4,7 +4,7 @@ module.exports.protect = async (req, res, next) => {
     if (req.cookies.token) {
         try {
             const data = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-            req.user =  await userModel.findOne({ email: data.email }).select('-password');
+            req.user =  await userModel.findOne({ username: data.username }).select('-password');
             next()
         }
         catch(err){

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chats APP</title>
+    <!-- <link rel="stylesheet" href="/css/style.css"> -->
+    <link rel="stylesheet" href="/css/chats.css">
+    <link rel="stylesheet" href="/libraries/remixicon.css">
+</head>
+
+<body>
+    <div id="main">
+        <div class="header">
+            <div class="logo">
+                <a href="/">Harry's Chat App</a>
+                |
+                <a><%= user.username %></a>
+            </div>
+            <div class="right">
+                <a href="/auth/logout">
+                    <i class="ri-logout-box-r-line"></i>
+                </a>
+                <a class="profile" href="/auth/profile">
+                    <img src="/imgs/<%= user.avatar %>" alt="profileImage">
+                </a>
+            </div>
+        </div>
+        <div class="allchats">
+            <% allUsers.forEach(function(e){ %>
+                <div class="chat" onclick="startPrivateChat(`<%= e._id %>`)">
+                    <div class="profile">
+                        <img src="/imgs/<%= e.avatar %>" alt="Profile Image">
+                    </div>
+                    <div class="username">
+                        <%= e.username %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script>
+        const socket = io();
+
+        function startPrivateChat(userId) {
+            window.location.href = `/chats/${userId}`;
+        }
+
+        socket.on('roomJoined', (roomId) => {
+            console.log('Joined room:', roomId);
+            // Redirect to the chat room or update the UI to show the chat interface
+        });
+
+        socket.on('message', (message) => {
+            console.log('New message:', message);
+            // Update the chat UI with the new message
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat app By Harsh - Login</title>
+    <link rel="stylesheet" href="/libraries/remixicon.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/register.css">
+</head>
+
+<body>
+
+    <div id="main">
+        <h1>Login Your Account</h1>
+        <form action="/auth/login" method="post">
+            <input class="inp" placeholder="username" required type="text" name="username" id="username">
+            <div class="password">
+                <input class="inp" placeholder="password" required type="password" name="password" id="password">
+                <i style="padding: 5px;" class="ri-eye-fill Show"></i>
+            </div>
+            <input type="submit" class="btn" value="Login">
+            <a href="/register">Don't Have An Account? Register</a>
+        </form>
+
+
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+
+</html>

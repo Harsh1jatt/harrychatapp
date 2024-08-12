@@ -1,0 +1,37 @@
+.profileContainer{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 30px;
+    /* flex-direction: column; */
+    background: #fff;
+    gap: 30px;
+}
+.profileImage{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+
+}
+img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.info{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+.info .btn{
+    margin-top: 30px;
+}
+
+.Username{
+    font-size: 30px;
+}
+.email{
+    font-size: 30px;
+}

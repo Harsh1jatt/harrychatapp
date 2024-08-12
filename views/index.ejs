@@ -1,0 +1,162 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/libraries/remixicon.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2><a href="/chats">Chat App</a></h2>
+            <h2><%= otherUser.username %></h2>
+            <button id="delete-all-button">Delete All Chat</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <% 
+            let lastMessageDate = null;
+            const today = new Date().toLocaleDateString();
+            %>
+            <% messages.forEach(message => { %>
+                <% 
+                const messageDate = new Date(message.timestamp).toLocaleDateString();
+                const isNewDay = !lastMessageDate || lastMessageDate !== messageDate;
+                if (isNewDay) {
+                    lastMessageDate = messageDate;
+                %>
+                <div class="date-separator">
+                    <%= messageDate === today ? 'Today' : messageDate %>
+                </div>
+                <% } %>
+                <div class="message <%= message.senderId.equals(currentUser._id) ? 'sent' : 'received' %>" id="message-<%= message._id %>">
+                    <span class="message-text"><%= message.message.replace(/</g, '&lt;').replace(/>/g, '&gt;') %></span>
+                    <span class="timestamp"><%= new Date(message.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) %></span>
+                </div>
+            <% }); %>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button id="send-button"><i class="ri-send-plane-2-line"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
+    <script>
+        // Function to scroll to the bottom of chat
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        document.getElementById('delete-all-button').addEventListener('click', function () {
+            if (confirm('Are you sure you want to delete all messages in this chat?')) {
+                fetch(`/chats/deleteAll/<%= roomId %>`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        document.getElementById('chat-messages').innerHTML = '';  // Clear chat messages in UI
+                    } else {
+                        alert('Failed to delete messages');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting messages');
+                });
+            }
+        });
+
+        const socket = io();
+        const roomId = '<%= roomId %>';
+
+        // Join the room when the page loads
+        socket.emit('joinRoom', { roomId });
+        console.log(`Joining room: ${roomId}`);
+
+        // Display previous messages
+        socket.on('previousMessages', (messages) => {
+            messages.forEach(displayMessage);
+            scrollToBottom(); // Scroll to the bottom after displaying previous messages
+        });
+
+        // Send message on button click
+        document.getElementById('send-button').addEventListener('click', function () {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+
+            if (message) {
+                // Emit the message to the server
+                socket.emit('message', { roomId, message, senderId: '<%= currentUser._id %>' });
+                console.log(`Sent message: ${message} to room: ${roomId}`);
+
+                // Clear input field
+                input.value = '';
+                input.focus();
+            }
+        });
+
+        // Display received messages
+        socket.on('message', (message) => {
+            console.log(`Received message: ${message.message} from room: ${message.roomId}`);
+            displayMessage(message);
+            scrollToBottom(); // Scroll to the bottom when a new message is received
+        });
+
+        // Function to display messages
+        function displayMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = message.message;
+
+            if (message.senderId === '<%= currentUser._id %>') {
+                messageDiv.classList.add('sent');
+                messageDiv.style.textAlign = 'right';
+            } else {
+                messageDiv.classList.add('received');
+                messageDiv.style.textAlign = 'left';
+            }
+
+            const timestamp = document.createElement('span');
+            timestamp.classList.add('timestamp');
+            timestamp.textContent = new Date(message.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            messageDiv.appendChild(timestamp);
+
+            document.getElementById('chat-messages').appendChild(messageDiv);
+        }
+
+        // Initial check to disable the button if the input is empty
+        document.getElementById('message-input').addEventListener('input', function () {
+            const sendButton = document.getElementById('send-button');
+            if (document.getElementById('message-input').value.trim() === '') {
+                sendButton.setAttribute('disabled', 'true');
+            } else {
+                sendButton.removeAttribute('disabled');
+            }
+        });
+
+        // Send message on Enter key press
+        document.getElementById('message-input').addEventListener('keypress', function (event) {
+            const sendButton = document.getElementById('send-button');
+            if (event.key === 'Enter' && !sendButton.hasAttribute('disabled')) {
+                event.preventDefault();
+                sendButton.click();
+            }
+        });
+
+        // Scroll to bottom on page load
+        scrollToBottom();
+    </script>
+</body>
+</html>

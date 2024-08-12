@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat app By Harsh - Register</title>
+    <link rel="stylesheet" href="/libraries/remixicon.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/register.css">
+</head>
+
+<body>
+
+    <div id="main">
+        <h1>Register Your Account</h1>
+        <form action="/auth/register" method="post" enctype="application/x-www-form-urlencoded">
+            <input class="inp" placeholder="username" type="text" required name="username" id="username">
+            <input class="inp" placeholder="email" type="email" required name="email" id="email">
+            <div class="password">
+                <input class="inp" placeholder="password" type="password" required name="password" id="password">
+                <i style="padding: 5px;" class="ri-eye-fill Show"></i>
+            </div>
+            <input type="submit" class="btn" value="Register">
+            <a href="/login">Already Have An Account? Login</a>
+        </form>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+
+</html>
